@@ -30,7 +30,21 @@ def shopSmart(orderList, fruitShops):
         fruitShops: List of FruitShops
     """
     "*** YOUR CODE HERE ***"
-    return None
+    
+    if (orderList.__len__ == 0 or fruitShops.__len__ == 0):
+        print("Invalid order list or shop list")
+
+    minShop = fruitShops[0]
+    min = minShop.getPriceOfOrder(orderList)
+    
+    for i in range(1, len(fruitShops)):
+        temp = fruitShops[i].getPriceOfOrder(orderList)
+		
+        if (temp < min):
+            min = temp
+            minShop = fruitShops[i]
+
+    return minShop
 
 
 if __name__ == '__main__':

@@ -1,0 +1,45 @@
+[1mdiff --git a/Project 0/tutorial/buyLotsOfFruit.py b/Project 0/tutorial/buyLotsOfFruit.py[m
+[1mindex a02448d..23fa1f6 100644[m
+[1m--- a/Project 0/tutorial/buyLotsOfFruit.py[m	
+[1m+++ b/Project 0/tutorial/buyLotsOfFruit.py[m	
+[36m@@ -36,6 +36,13 @@[m [mdef buyLotsOfFruit(orderList):[m
+     """[m
+     totalCost = 0.0[m
+     "*** YOUR CODE HERE ***"[m
+[32m+[m[41m    [m
+[32m+[m[32m    for fruit, num in orderList:[m
+[32m+[m[32m        if fruit not in fruitPrices:[m
+[32m+[m[32m            print("Sorry we don't have " + fruit)[m
+[32m+[m[32m            return None[m
+[32m+[m[32m        totalCost += fruitPrices[fruit] * num[m
+[32m+[m[41m    [m
+     return totalCost[m
+ [m
+ [m
+[1mdiff --git a/Project 0/tutorial/shopSmart.py b/Project 0/tutorial/shopSmart.py[m
+[1mindex fbbd3ca..4dbd08d 100644[m
+[1m--- a/Project 0/tutorial/shopSmart.py[m	
+[1m+++ b/Project 0/tutorial/shopSmart.py[m	
+[36m@@ -30,7 +30,21 @@[m [mdef shopSmart(orderList, fruitShops):[m
+         fruitShops: List of FruitShops[m
+     """[m
+     "*** YOUR CODE HERE ***"[m
+[31m-    return None[m
+[32m+[m[41m    [m
+[32m+[m[32m    if (orderList.__len__ == 0 or fruitShops.__len__ == 0):[m
+[32m+[m[32m        print("Invalid order list or shop list")[m
+[32m+[m
+[32m+[m[32m    minShop = fruitShops[0][m
+[32m+[m[32m    min = minShop.getPriceOfOrder(orderList)[m
+[32m+[m[41m    [m
+[32m+[m[32m    for i in range(1, len(fruitShops)):[m
+[32m+[m[32m        temp = fruitShops[i].getPriceOfOrder(orderList)[m
+[32m+[m[41m		[m
+[32m+[m[32m        if (temp < min):[m
+[32m+[m[32m            min = temp[m
+[32m+[m[32m            minShop = fruitShops[i][m
+[32m+[m
+[32m+[m[32m    return minShop[m
+ [m
+ [m
+ if __name__ == '__main__':[m
