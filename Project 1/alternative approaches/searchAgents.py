@@ -368,6 +368,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 """
 	Other approaches:
 	First, ignore all the foods that is adjacent to 2 other foods. Keep all other foods
-		(1) Find the shortest path through all foods by solving the Travelling Salesman Problem using Christofides algorithm and return the cost of the whole path as heuristic
+        (1) Find the shortest path through all foods by solving the Travelling Salesman Problem using Christofides algorithm and return the cost of the whole path as heuristic
         (2) Find all the choke points in the graph that when you remove a point, the graph splits into two smaller graphs. Find the shortest path through smaller graphs and add them later. (Just an idea, have no idea how to implement this)
 """
