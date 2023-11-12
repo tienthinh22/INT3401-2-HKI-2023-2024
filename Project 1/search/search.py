@@ -121,12 +121,72 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = set()
+    queue = util.Queue()
+    path = util.Queue()
+
+    queue.push(problem.getStartState())
+    path.push([])
+
+    while not queue.isEmpty():
+        current_state = queue.pop()
+        current_path = path.pop()
+        
+        # neu state da duoc tham thi sang state tiep theo
+        if current_state in visited: continue
+        visited.add(current_state)
+
+        # neu la goalState thi tra ve ket qua
+        if problem.isGoalState(current_state):
+            return current_path
+
+        # lay cac state xung quanh currentstate
+        list = problem.getSuccessors(current_state)
+
+        # 1 successor: (nextState, action, cost) xem trong file searchAgents
+        for (nextState, action, cost) in list:
+            if not nextState in visited:
+                tmp_path = current_path + [action]
+                queue.push(nextState)
+                path.push(tmp_path)
+    
+    return None
     
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = set()
+    pqueue = util.PriorityQueue()
+    path = util.PriorityQueue()
+
+    # change data struct for priorityQueue
+    pqueue.push((problem.getStartState(),0),0)
+    path.push([], 0)
+
+    while not pqueue.isEmpty():
+        current_state, current_cost = pqueue.pop()
+        current_path = path.pop()
+        
+        # neu state da duoc tham thi sang state tiep theo
+        if current_state in visited: continue
+        visited.add(current_state)
+
+        # neu la goalState thi tra ve ket qua
+        if problem.isGoalState(current_state):
+            return current_path
+
+        # lay cac state xung quanh currentstate
+        list = problem.getSuccessors(current_state)
+
+        # 1 successor: (nextState, action, cost) xem trong file searchAgents
+        for (nextState, action, cost) in list:
+            if not nextState in visited:
+                newcost = cost + current_cost
+                tmp_path = current_path + [action]
+                pqueue.push((nextState,newcost),newcost)
+                path.push(tmp_path, newcost)
+    
+    return None
 
 def nullHeuristic(state, problem=None):
     """
