@@ -72,6 +72,68 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+class Node:
+    def __init__(self, state, path = list(), cost = 0):
+        self.state = state
+        self.path = path
+        self.cost = cost
+
+    def getState(self):
+        return self.state
+
+    def getPath(self):
+        return self.path
+
+    def getCost(self):
+        return self.cost
+
+    def setState(self, state):
+        self.state = state
+
+    def setPath(self, path):
+        self.path = path
+
+    def setCost(self, cost):
+        self.cost = cost
+
+class priorityQueue4UCS(util.PriorityQueue):
+    def push(self, node: Node):
+        super().push(node, node.getCost())
+        
+class priorityQueue4AStar(util.PriorityQueue):
+    def  __init__(self, heuristicFunction, problem = None):
+        super().__init__()
+        self.heuristicFunction = heuristicFunction
+        self.problem = problem
+
+    def push(self, node):
+        super().push(node, node.getCost() + self.heuristicFunction(node.getState(), self.problem))
+
+def graphSearch(problem, dataStructure):
+    visited = set()
+
+    dataStructure.push(Node(problem.getStartState()))
+
+    while (not dataStructure.isEmpty()):
+        temp = dataStructure.pop()
+
+        if (temp.getState() in visited):
+            continue
+
+        if (problem.isGoalState(temp.getState())):
+            return temp.getPath()
+
+        visited.add(temp.getState())
+
+        # i[0] = position/state (x, y); i[1] = action to get there; i[2] = cost to get there from parent
+        for i in problem.getSuccessors(temp.getState()):
+            if (i[0] not in visited):
+                dataStructure.push(Node(i[0], temp.getPath() + [i[1]], temp.getCost() + i[2]))
+
+    print(problem.getStartState())
+
+    return list()
+
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,16 +149,29 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+
+    from util import Stack
+
+    return graphSearch(problem, Stack())
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+
+    from util import Queue
+
+    return graphSearch(problem, Queue())
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
+    return graphSearch(problem, priorityQueue4UCS()) #Priority queue from above
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -109,6 +184,9 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
+    return graphSearch(problem, priorityQueue4AStar(heuristic, problem)) #Priority queue from above
+
     util.raiseNotDefined()
 
 
