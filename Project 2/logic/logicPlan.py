@@ -224,6 +224,9 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
+
+    return disjoin(literals) #~This works because they are literals
+
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
@@ -236,6 +239,27 @@ def atMostOne(literals: List[Expr]) -> Expr:
     itertools.combinations may be useful here.
     """
     "*** BEGIN YOUR CODE HERE ***"
+
+    '''
+    CNF: (A | B) & (C | D) & (E | F) ...
+
+    atMostOne:
+        + 2 literals: ~A | ~B
+        + 3 literals: (~A | ~B) & (~B | ~C) & (~A | ~C)
+        + 4 literals: (~A | ~B) & (~A | ~C) & (~A | ~D) & (~B | ~C) & (~B | ~D) & (~C | ~D)
+        + n literals: conjoin of all combinations of disjoins of reversed literals
+    
+    '''
+
+    combinations = itertools.combinations(literals, 2)
+
+    exprs = list()
+
+    for i in combinations:
+        exprs.append(~i[0] | ~i[1])
+
+    return conjoin(exprs)
+
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
@@ -247,6 +271,20 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     the expressions in the list is true.
     """
     "*** BEGIN YOUR CODE HERE ***"
+
+    '''
+    CNF: (A | B) & (C | D) & (E | F) ...
+
+    exactlyOne:
+        + 2 literals: (A | B) & (~A | ~B)
+        + 3 literals: (A | B | C) & (~A | ~B) & (~A | ~C) & (~B | ~C)
+        + 4 literals: (A | B | C | D) & (~A | ~B) & (~A | ~C) & (~A | ~D) & (~B | ~C) & (~B | ~D) & (~C | ~D)
+        + n literals: conjoin of atLeastOne and atMostOne (well, obviously)
+    
+    '''
+
+    return conjoin(atLeastOne(literals), atMostOne(literals))
+
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
