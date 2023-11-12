@@ -87,7 +87,7 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    visited = []
+    visited = set()
     stack = util.Stack()
     path = util.Stack()
 
@@ -100,7 +100,7 @@ def depthFirstSearch(problem: SearchProblem):
         
         # neu state da duoc tham thi sang state tiep theo
         if current_state in visited: continue
-        visited.append(current_state)
+        visited.add(current_state)
 
         # neu la goalState thi tra ve ket qua
         if problem.isGoalState(current_state):
