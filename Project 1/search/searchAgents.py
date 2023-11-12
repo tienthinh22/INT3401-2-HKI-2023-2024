@@ -399,9 +399,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     "*** YOUR CODE HERE ***"
 
-    def distance(a, b):
-        import math
-        return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+    from util import manhattanDistance as distance
 
     length = len(state.getUnvisitedCorners())
     
