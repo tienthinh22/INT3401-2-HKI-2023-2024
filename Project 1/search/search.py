@@ -87,7 +87,33 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = []
+    stack = util.Stack()
+    path = util.Stack()
+
+    stack.push(problem.getStartState())
+    path.push([])
+
+    while not stack.isEmpty():
+        current_state = stack.pop()
+        current_path = path.pop()
+        visited.append(current_state)
+
+        # neu la goalState thi tra ve ket qua
+        if problem.isGoalState(current_state):
+            return current_path
+
+        # lay cac state xung quanh currentstate
+        list = problem.getSuccessors(current_state)
+
+        # 1 successor: (nextState, action, cost) xem trong file searchAgents.py
+        for (nextState, action, cost) in list:
+            if not nextState in visited:
+                tmp_path = current_path + [action]
+                stack.push(nextState)
+                path.push(tmp_path)
+    
+    return None
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
