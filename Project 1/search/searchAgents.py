@@ -34,7 +34,7 @@ description for details.
 Good luck and happy searching!
 """
 
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, FrozenSet
 from game import Directions
 from game import Agent
 from game import Actions
@@ -270,6 +270,26 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+class CornersProblemState():
+    __position: Tuple[int, int] # 2 underdashed lines 'kinda' make the attribute private
+    __unvisitedCorners: FrozenSet[Tuple[int, int]] # FrozenSet because you cant add changable data structures into sets cuz they are not hashable
+
+    def __init__(self, position, unvisitedCorners):
+        self.__position = position # Also pointer
+        self.__unvisitedCorners = unvisitedCorners # Pointer
+
+    def __eq__(self, other):
+        return self.__position == other.getPosition() and self.__unvisitedCorners == other.getUnvisitedCorners()
+
+    def __hash__(self) -> int:
+        return hash((self.__position, self.__unvisitedCorners))
+
+    def getPosition(self) -> Tuple[int, int]:
+        return self.__position
+
+    def getUnvisitedCorners(self) -> FrozenSet[Tuple[int, int]]:
+        return self.__unvisitedCorners
+
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -296,6 +316,8 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        return CornersProblemState(self.startingPosition, frozenset(self.corners))
+
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -303,6 +325,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        return len(state.getUnvisitedCorners()) == 0
+
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -326,6 +350,19 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+
+            x, y = state.getPosition()
+            dx, dy = Actions.directionToVector(action)
+            nextX, nextY = int(x + dx), int(y + dy)
+
+            if (not self.walls[nextX][nextY]):
+                next = (nextX, nextY)
+                unvisitedCorners = state.getUnvisitedCorners() # Pointer to the FrozenSet
+
+                if (next in unvisitedCorners):
+                    unvisitedCorners = unvisitedCorners - {next} # Create new copy
+
+                successors.append((CornersProblemState(next, unvisitedCorners), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
