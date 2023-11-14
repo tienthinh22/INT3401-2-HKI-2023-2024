@@ -630,6 +630,36 @@ def foodLogicPlan(problem) -> List:
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
+#Helper functions
+
+def addThingsToKB(KB, PacPhysics, Actions, Percepts):
+    KB.append(PacPhysics)
+    KB.append(Actions)
+    KB.append(Percepts)
+
+def possibleLocation(KB, non_outer_wall_coords, t, possible_locations):
+    for x, y in non_outer_wall_coords:
+        atXY = PropSymbolExpr(pacman_str, x, y, time = t)
+
+        if (entails(conjoin(KB), atXY)):
+            KB.append(atXY)
+            possible_locations.append((x, y))
+
+        elif (entails(conjoin(KB), ~atXY)):
+            KB.append(~atXY)
+
+def provableWalls(KB, non_outer_wall_coords, t, known_map):
+    for x, y in non_outer_wall_coords:
+        wallXY = PropSymbolExpr(wall_str, x, y)
+
+        if (entails(conjoin(KB), wallXY)):
+            KB.append(wallXY)
+            known_map.append(wallXY)
+
+        if (entails(conjoin(KB), ~wallXY)):
+            KB.append(~wallXY)
+            known_map.append(~wallXY)
+
 #______________________________________________________________________________
 # QUESTION 6
 
