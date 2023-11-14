@@ -655,17 +655,17 @@ def possibleLocation(KB, non_outer_wall_coords, t):
 
     return possible_locations
 
-def provableWalls(KB, non_outer_wall_coords, t, known_map):
+def provableWalls(KB, non_outer_wall_coords, known_map):
     for x, y in non_outer_wall_coords:
         wallXY = PropSymbolExpr(wall_str, x, y)
 
         if (entails(conjoin(KB), wallXY)):
             KB.append(wallXY)
-            known_map.append(wallXY)
+            known_map[x][y] = 1
 
         if (entails(conjoin(KB), ~wallXY)):
             KB.append(~wallXY)
-            known_map.append(~wallXY)
+            known_map[x][y] = 0
 
 #______________________________________________________________________________
 # QUESTION 6
@@ -726,6 +726,7 @@ def localization(problem, agent) -> Generator:
         possible_locations = possibleLocation(KB = KB, non_outer_wall_coords = non_outer_wall_coords, t = t)
         
         agent.moveToNextState(agent.actions[t])
+
         "*** END YOUR CODE HERE ***"
         yield possible_locations
 
