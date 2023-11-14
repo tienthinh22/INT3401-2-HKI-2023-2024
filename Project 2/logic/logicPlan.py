@@ -758,11 +758,38 @@ def mapping(problem, agent) -> Generator:
     KB.append(conjoin(outer_wall_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    KB.append(PropSymbolExpr(pacman_str, pac_x_0, pac_y_0, time = 0))
+
+    KB.append(~PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
+    known_map[pac_x_0][pac_y_0] = 0
+
+    # if (not (pac_x_0, pac_y_0) in non_outer_wall_coords):
+    #     KB.append(~PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
+    #     known_map[pac_x_0][pac_y_0] = 0
+    # else:
+    #     KB.append(PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
+    #     known_map[pac_x_0][pac_y_0] = 1
 
     for t in range(agent.num_timesteps):
+        print(t)
+
+        PacPhysics = pacphysicsAxioms(t, all_coords, non_outer_wall_coords, known_map, sensorAxioms, allLegalSuccessorAxioms)
+        action = PropSymbolExpr(agent.actions[t], time = t)
+        percept = fourBitPerceptRules(t, agent.getPercepts())
+
+        #addThingsToKB(KB, PacPhysics, Actions, Percepts)
+        addThingsToKB(KB = KB, PacPhysics = PacPhysics, Actions = action, Percepts = percept)
+
+        #provableWalls(KB, non_outer_wall_coords, known_map)
+        provableWalls(KB, non_outer_wall_coords, known_map)
+
+        agent.moveToNextState(agent.actions[t])
+
         "*** END YOUR CODE HERE ***"
         yield known_map
+
+    util.raiseNotDefined()
 
 #______________________________________________________________________________
 # QUESTION 8
