@@ -643,7 +643,7 @@ def possibleLocation(KB, non_outer_wall_coords, t):
     for x, y in non_outer_wall_coords:
         atXY = PropSymbolExpr(pacman_str, x, y, time = t)
 
-		#Satisfiablity == At least one possible world where A & B is true
+        #Satisfiablity == At least one possible world where A & B is true
         if (findModel(conjoin(KB) & atXY) != False):
             possible_locations.append((x, y))
 
@@ -683,11 +683,53 @@ def localization(problem, agent) -> Generator:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    #print(dir(agent))
+
+    '''
+    ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__',
+    '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__',
+    '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__',
+    '__weakref__', 'actionIndex', 'actions', 'addNoOp_t0', 'display', 'drawPossibleStates', 'getAction', 'getPercepts',
+    'getValidActions', 'get_known_walls_non_walls_from_known_map', 'live_checking', 'moveToNextState', 'num_timesteps',
+    'planType', 'planningFunction', 'planning_fn_output', 'problem', 'registerInitialState', 'resetLocation', 'scripted_actions',
+    'state', 'visited_states']
+    '''
+
+    #action = actions[t] or getAction(t) or actions(t) or actions[t] or actions()
+    #percepts = getPercepts(t) or getPercepts[t] or getPercept()
+    #percepts = fourBitPerceptRules(t, percepts)
+
+    for x, y in walls_list:
+        KB.append(PropSymbolExpr(wall_str, x, y))
+
+    notWallList = list()
+
+    for i in all_coords:
+        if (not i in walls_list):
+            notWallList.append(i)
+
+    for x, y in notWallList:
+        KB.append(~PropSymbolExpr(wall_str, x, y))
 
     for t in range(agent.num_timesteps):
+        print(t)
+
+        PacPhysics = pacphysicsAxioms(t, all_coords, non_outer_wall_coords, walls_grid, sensorAxioms, allLegalSuccessorAxioms)
+        action = PropSymbolExpr(agent.actions[t], time = t)
+        percept = fourBitPerceptRules(t, agent.getPercepts())
+
+        #addThingsToKB(KB, PacPhysics, Actions, Percepts)
+        addThingsToKB(KB = KB, PacPhysics = PacPhysics, Actions = action, Percepts = percept)
+
+        #possibleLocation(KB, non_outer_wall_coords, t)
+        possible_locations = possibleLocation(KB = KB, non_outer_wall_coords = non_outer_wall_coords, t = t)
+        
+        agent.moveToNextState(agent.actions[t])
         "*** END YOUR CODE HERE ***"
         yield possible_locations
+
+    util.raiseNotDefined()
 
 #______________________________________________________________________________
 # QUESTION 7
