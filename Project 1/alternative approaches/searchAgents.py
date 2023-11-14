@@ -117,7 +117,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    13898
+    13898 #5
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
@@ -145,7 +145,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    9551
+    9551 #4
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
@@ -305,7 +305,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    7954
+    7954 #3
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
@@ -333,7 +333,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    5543
+    5543 #1
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
@@ -398,7 +398,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    5543
+    5543 #2
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
@@ -431,6 +431,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     return heuristic
 
 """
+	Note: the one with the higher heuristic is more likely to be better -> add all not-eaten foods
     Other approaches:
     First, ignore all the foods that is adjacent to 2 other foods. Keep all other foods
         (1) Find the shortest path through all foods by solving the Travelling Salesman Problem using Christofides algorithm and return the cost of the whole path as heuristic
