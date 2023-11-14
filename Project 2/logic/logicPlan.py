@@ -637,16 +637,23 @@ def addThingsToKB(KB, PacPhysics, Actions, Percepts):
     KB.append(Actions)
     KB.append(Percepts)
 
-def possibleLocation(KB, non_outer_wall_coords, t, possible_locations):
+def possibleLocation(KB, non_outer_wall_coords, t):
+    possible_locations = list()
+
     for x, y in non_outer_wall_coords:
         atXY = PropSymbolExpr(pacman_str, x, y, time = t)
 
+		#Satisfiablity == At least one possible world where A & B is true
+        if (findModel(conjoin(KB) & atXY) != False):
+            possible_locations.append((x, y))
+
         if (entails(conjoin(KB), atXY)):
             KB.append(atXY)
-            possible_locations.append((x, y))
 
         elif (entails(conjoin(KB), ~atXY)):
             KB.append(~atXY)
+
+    return possible_locations
 
 def provableWalls(KB, non_outer_wall_coords, t, known_map):
     for x, y in non_outer_wall_coords:
