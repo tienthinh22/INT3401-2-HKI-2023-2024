@@ -67,11 +67,9 @@ class RegressionModel(object):
         self.batch_size = 200
         self.learning_rate = -0.05
         self.weight1 = nn.Parameter(1,200)
-        self.weight2 = nn.Parameter(200,400)
-        self.weight3 = nn.Parameter(400,1)
+        self.weight2 = nn.Parameter(200,1)
         self.bias1 = nn.Parameter(1,200)
-        self.bias2 = nn.Parameter(1,400)
-        self.bias3 = nn.Parameter(1,1)
+        self.bias2 = nn.Parameter(1,1)
 
     def run(self, x):
         """
@@ -83,11 +81,9 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
-        hiddenlayer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
-        hiddenlayer2 = nn.ReLU(nn.AddBias(nn.Linear(hiddenlayer1, self.weight2), self.bias2))
-        finallayer = nn.AddBias(nn.Linear(hiddenlayer2, self.weight3), self.bias3)
+        hiddenlayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
+        finallayer = nn.AddBias(nn.Linear(hiddenlayer, self.weight2), self.bias2)
         return finallayer
-
     def get_loss(self, x, y):
         """
         Computes the loss for a batch of examples.
@@ -112,13 +108,11 @@ class RegressionModel(object):
                 trainingloss = self.get_loss(x,y)
                 loss = nn.as_scalar(trainingloss)
                 if (loss > 0.02):
-                    gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.weight3, self.bias1, self.bias2, self.bias3])
+                    gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.bias1, self.bias2])
                     self.weight1.update(gradient[0], self.learning_rate)
                     self.weight2.update(gradient[1], self.learning_rate)
-                    self.weight3.update(gradient[2], self.learning_rate)
-                    self.bias1.update(gradient[3], self.learning_rate)
-                    self.bias2.update(gradient[4], self.learning_rate)
-                    self.bias3.update(gradient[5], self.learning_rate)
+                    self.bias1.update(gradient[2], self.learning_rate)
+                    self.bias2.update(gradient[3], self.learning_rate)
 
 class DigitClassificationModel(object):
     """
@@ -140,11 +134,9 @@ class DigitClassificationModel(object):
         self.batch_size = 100
         self.learning_rate = -0.5
         self.weight1 = nn.Parameter(784,100)
-        self.weight2 = nn.Parameter(100,200)
-        self.weight3 = nn.Parameter(200,10)
+        self.weight2 = nn.Parameter(100,10)
         self.bias1 = nn.Parameter(1,100)
-        self.bias2 = nn.Parameter(1,200)
-        self.bias3 = nn.Parameter(1,10)
+        self.bias2 = nn.Parameter(1,10)
 
     def run(self, x):
         """
@@ -161,10 +153,10 @@ class DigitClassificationModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
-        hiddenlayer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
-        hiddenlayer2 = nn.ReLU(nn.AddBias(nn.Linear(hiddenlayer1, self.weight2), self.bias2))
-        finallayer = nn.AddBias(nn.Linear(hiddenlayer2, self.weight3), self.bias3)
+        hiddenlayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
+        finallayer = nn.AddBias(nn.Linear(hiddenlayer, self.weight2), self.bias2)
         return finallayer
+
 
     def get_loss(self, x, y):
         """
@@ -193,14 +185,11 @@ class DigitClassificationModel(object):
                 trainingloss = self.get_loss(x,y)
                 loss = nn.as_scalar(trainingloss)
                 if (loss > 0.02):
-                    gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.weight3, self.bias1, self.bias2, self.bias3])
+                    gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.bias1, self.bias2])
                     self.weight1.update(gradient[0], self.learning_rate)
                     self.weight2.update(gradient[1], self.learning_rate)
-                    self.weight3.update(gradient[2], self.learning_rate)
-                    self.bias1.update(gradient[3], self.learning_rate)
-                    self.bias2.update(gradient[4], self.learning_rate)
-                    self.bias3.update(gradient[5], self.learning_rate)
-        
+                    self.bias1.update(gradient[2], self.learning_rate)
+                    self.bias2.update(gradient[3], self.learning_rate)
 
 class LanguageIDModel(object):
     """
