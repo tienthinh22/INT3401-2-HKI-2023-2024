@@ -137,6 +137,14 @@ class DigitClassificationModel(object):
     def __init__(self):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+        self.batch_size = 100
+        self.learning_rate = -0.5
+        self.weight1 = nn.Parameter(784,100)
+        self.weight2 = nn.Parameter(100,200)
+        self.weight3 = nn.Parameter(200,10)
+        self.bias1 = nn.Parameter(1,100)
+        self.bias2 = nn.Parameter(1,200)
+        self.bias3 = nn.Parameter(1,10)
 
     def run(self, x):
         """
@@ -153,6 +161,10 @@ class DigitClassificationModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        hiddenlayer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
+        hiddenlayer2 = nn.ReLU(nn.AddBias(nn.Linear(hiddenlayer1, self.weight2), self.bias2))
+        finallayer = nn.AddBias(nn.Linear(hiddenlayer2, self.weight3), self.bias3)
+        return finallayer
 
     def get_loss(self, x, y):
         """
@@ -168,12 +180,27 @@ class DigitClassificationModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(x),y)
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        loss = 0.03
+        while (loss > 0.02):
+            for x,y in dataset.iterate_once(self.batch_size):
+                trainingloss = self.get_loss(x,y)
+                loss = nn.as_scalar(trainingloss)
+                if (loss > 0.02):
+                    gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.weight3, self.bias1, self.bias2, self.bias3])
+                    self.weight1.update(gradient[0], self.learning_rate)
+                    self.weight2.update(gradient[1], self.learning_rate)
+                    self.weight3.update(gradient[2], self.learning_rate)
+                    self.bias1.update(gradient[3], self.learning_rate)
+                    self.bias2.update(gradient[4], self.learning_rate)
+                    self.bias3.update(gradient[5], self.learning_rate)
+        
 
 class LanguageIDModel(object):
     """
