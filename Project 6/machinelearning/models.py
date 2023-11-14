@@ -209,6 +209,14 @@ class LanguageIDModel(object):
 
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+        self.batch_size = 100
+        self.learning_rate = -0.1
+        self.weight1 = nn.Parameter(self.num_chars,500)
+        self.weight2 = nn.Parameter(500, 500)
+        self.weight3 = nn.Parameter(500, len(self.languages))
+        self.bias1 = nn.Parameter(1,500)
+        self.bias2 = nn.Parameter(1,500)
+        self.bias3 = nn.Parameter(1,len(self.languages))
 
     def run(self, xs):
         """
@@ -240,6 +248,11 @@ class LanguageIDModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        vector = nn.Linear(xs[0], self.weight1)
+        for x in xs:
+            vector = nn.ReLU(nn.AddBias(nn.Linear(nn.Add(nn.Linear(x, self.weight1), vector),self.weight2),self.bias2))
+        finalvector = nn.AddBias(nn.Linear(vector, self.weight3), self.bias3) 
+        return finalvector
 
     def get_loss(self, xs, y):
         """
@@ -256,9 +269,20 @@ class LanguageIDModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(xs), y)
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        while dataset.get_validation_accuracy() < 0.89:
+            for x,y in dataset.iterate_once(self.batch_size):
+                trainingloss = self.get_loss(x,y)
+                gradient = nn.gradients(trainingloss, [self.weight1, self.weight2, self.weight3, self.bias1, self.bias2, self.bias3])
+                self.weight1.update(gradient[0], self.learning_rate)
+                self.weight2.update(gradient[1], self.learning_rate)
+                self.weight3.update(gradient[2], self.learning_rate)
+                self.bias1.update(gradient[3], self.learning_rate)
+                self.bias2.update(gradient[4], self.learning_rate)
+                self.bias3.update(gradient[5], self.learning_rate)
