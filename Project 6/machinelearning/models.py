@@ -95,7 +95,7 @@ class RegressionModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
-         return nn.SquareLoss(self.run(x),y)
+        return nn.SquareLoss(self.run(x),y)
 
     def train(self, dataset):
         """
