@@ -817,12 +817,34 @@ def slam(problem, agent) -> Generator:
     KB.append(conjoin(outer_wall_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    KB.append(PropSymbolExpr(pacman_str, pac_x_0, pac_y_0, time = 0))
+
+    KB.append(~PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
+    known_map[pac_x_0][pac_y_0] = 0
 
     for t in range(agent.num_timesteps):
+        print(t)
+
+        PacPhysics = pacphysicsAxioms(t, all_coords, non_outer_wall_coords, known_map, SLAMSensorAxioms, SLAMSuccessorAxioms)
+        action = PropSymbolExpr(agent.actions[t], time = t)
+        percept = numAdjWallsPerceptRules(t, agent.getPercepts())
+
+        #addThingsToKB(KB, PacPhysics, Actions, Percepts)
+        addThingsToKB(KB = KB, PacPhysics = PacPhysics, Actions = action, Percepts = percept)
+
+        #possibleLocation(KB, non_outer_wall_coords, t)
+        possible_locations = possibleLocation(KB = KB, non_outer_wall_coords = non_outer_wall_coords, t = t)
+
+        #provableWalls(KB, non_outer_wall_coords, known_map)
+        provableWalls(KB, non_outer_wall_coords, known_map)
+
+        agent.moveToNextState(agent.actions[t])
+
         "*** END YOUR CODE HERE ***"
         yield (known_map, possible_locations)
 
+    util.raiseNotDefined()
 
 # Abbreviations
 plp = positionLogicPlan
