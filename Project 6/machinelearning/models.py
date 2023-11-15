@@ -56,7 +56,7 @@ class PerceptronModel(object):
 
             for x, y in dataset.iterate_once(batch_size):
                 if (self.get_prediction(x) != nn.as_scalar(y)):
-                    self.w.update(x, nn.as_scalar(y))
+                    nn.Parameter.update(self.w, x, nn.as_scalar(y))
                     weightsGotUpdated = True
 
 class RegressionModel(object):
