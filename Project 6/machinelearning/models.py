@@ -222,6 +222,19 @@ class LanguageIDModel(object):
 
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+        self.num_chars = 47
+        self.languages = ["English", "Spanish", "Finnish", "Dutch", "Polish"]
+
+        # Initialize your model parameters here
+        "*** YOUR CODE HERE ***"
+        self.batch_size = 10
+        self.layer1Weight = nn.Parameter(self.num_chars, 400)
+        self.layer2Weight = nn.Parameter(400, 400)
+        self.layer3Weight = nn.Parameter(400, 5)
+        self.layer1bias = nn.Parameter(1, 400)
+        self.layer2bias = nn.Parameter(1, 400)
+        self.layer3bias = nn.Parameter(1, 5)
+        self.learning_rate = -0.019
 
     def run(self, xs):
         """
@@ -253,6 +266,11 @@ class LanguageIDModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        vector = nn.Linear(nn.DataNode(xs[0].data), self.layer1Weight)
+        for x in xs:
+            vector = nn.ReLU(nn.AddBias(nn.Linear(nn.Add(nn.Linear(x, self.layer1Weight), vector), self.layer2Weight), self.layer2bias))
+        return nn.AddBias(nn.Linear(vector, self.layer3Weight), self.layer3bias)
+
 
     def get_loss(self, xs, y):
         """
@@ -269,9 +287,20 @@ class LanguageIDModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(xs), y)
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        while dataset.get_validation_accuracy() < 0.815:
+            for x, y in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(x, y)
+                gradients = nn.gradients(loss, [self.layer1Weight, self.layer2Weight, self.layer3Weight, self.layer1bias, self.layer2bias, self.layer3bias])
+                self.layer1Weight.update(gradients[0], self.learning_rate)
+                self.layer2Weight.update(gradients[1], self.learning_rate)
+                self.layer3Weight.update(gradients[2], self.learning_rate)
+                self.layer1bias.update(gradients[3], self.learning_rate)
+                self.layer2bias.update(gradients[4], self.learning_rate)
+                self.layer3bias.update(gradients[5], self.learning_rate)
