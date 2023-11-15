@@ -47,6 +47,7 @@ class PerceptronModel(object):
         Train the perceptron until convergence.
         """
         "*** YOUR CODE HERE ***"
+        # Tạo vòng lặp để huấn luyện perception
         i = 1
         while (i == 1):
             i = 0
@@ -81,9 +82,11 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+        # Tạo 1 Hidden Layer (tổng cộng 2 Linear Layer), trả về kết quả dự đoán của model là finallayer.
         hiddenlayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
         finallayer = nn.AddBias(nn.Linear(hiddenlayer, self.weight2), self.bias2)
         return finallayer
+        
     def get_loss(self, x, y):
         """
         Computes the loss for a batch of examples.
@@ -102,6 +105,7 @@ class RegressionModel(object):
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        # Huấn luyện bằng vòng lặp với điều kiện xét độ chuẩn xác.
         loss = 0.03
         while (loss > 0.02):
             for x,y in dataset.iterate_once(self.batch_size):
@@ -153,6 +157,7 @@ class DigitClassificationModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        # Tạo 1 Hidden Layer (tổng cộng 2 Linear Layer), trả về kết quả dự đoán của model là finallayer
         hiddenlayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
         finallayer = nn.AddBias(nn.Linear(hiddenlayer, self.weight2), self.bias2)
         return finallayer
@@ -179,6 +184,7 @@ class DigitClassificationModel(object):
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        # Huấn luyện bằng vòng lặp với điều kiện xét độ chuẩn xác.
         loss = 0.03
         while (loss > 0.02):
             for x,y in dataset.iterate_once(self.batch_size):
@@ -248,9 +254,15 @@ class LanguageIDModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        # Code được dựa theo Recurrent Neural Network (RNN) được hướng dẫn trong project.
+        # f initial
         vector = nn.Linear(xs[0], self.weight1)
+        
+        # Chạy vòng lặp với vector sau kết hợp với vector trước.
         for x in xs:
             vector = nn.ReLU(nn.AddBias(nn.Linear(nn.Add(nn.Linear(x, self.weight1), vector),self.weight2),self.bias2))
+            
+        # sau khi tổng hợp các vector rồi nhân vô hướng với weight3 rồi thêm bias vector để hoàn thành vector trả về
         finalvector = nn.AddBias(nn.Linear(vector, self.weight3), self.bias3) 
         return finalvector
 
@@ -276,6 +288,7 @@ class LanguageIDModel(object):
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        # Huấn luyện bằng vòng lặp với điều kiện xét độ chuẩn xác.
         while dataset.get_validation_accuracy() < 0.89:
             for x,y in dataset.iterate_once(self.batch_size):
                 trainingloss = self.get_loss(x,y)
