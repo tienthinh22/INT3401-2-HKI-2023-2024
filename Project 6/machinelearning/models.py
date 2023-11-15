@@ -70,6 +70,14 @@ class RegressionModel(object):
     def __init__(self):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+        self.batch_size = 200
+        self.layer1Weight = nn.Parameter(1, 200)
+        self.layer2Weight = nn.Parameter(200, 400)
+        self.layer3Weight = nn.Parameter(400, 1)
+        self.layer1bias = nn.Parameter(1, 200)
+        self.layer2bias = nn.Parameter(1, 400)
+        self.layer3bias = nn.Parameter(1, 1)
+        self.learning_rate = -0.005
 
     def run(self, x):
         """
@@ -81,6 +89,10 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+        layer1 = nn.ReLU(nn.AddBias(nn.Linear(x, self.layer1Weight), self.layer1bias))
+        layer2 = nn.ReLU(nn.AddBias(nn.Linear(layer1, self.layer2Weight), self.layer2bias))
+        layer3 = nn.AddBias(nn.Linear(layer2, self.layer3Weight), self.layer3bias)
+        return layer3
 
     def get_loss(self, x, y):
         """
@@ -93,12 +105,26 @@ class RegressionModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SquareLoss(self.run(x), y)
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        scaLoss = float('inf')
+        while scaLoss > 0.02:
+            for x, y in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(x, y)
+                scaLoss = nn.as_scalar(loss)
+                if (scaLoss > 0.02):
+                    gradients = nn.gradients(loss, [self.layer1Weight, self.layer2Weight, self.layer3Weight, self.layer1bias, self.layer2bias, self.layer3bias])
+                    self.layer1Weight.update(gradients[0], self.learning_rate)
+                    self.layer2Weight.update(gradients[1], self.learning_rate)
+                    self.layer3Weight.update(gradients[2], self.learning_rate)
+                    self.layer1bias.update(gradients[3], self.learning_rate)
+                    self.layer2bias.update(gradients[4], self.learning_rate)
+                    self.layer3bias.update(gradients[5], self.learning_rate)
 
 class DigitClassificationModel(object):
     """
