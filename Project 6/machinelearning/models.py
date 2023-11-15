@@ -143,6 +143,14 @@ class DigitClassificationModel(object):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
 
+        self.batch_size = 100
+        self.learningRate = -0.5
+        self.weight1 = nn.Parameter(784, 200)
+        self.weight2 = nn.Parameter(200, 10)
+        self.bias1 = nn.Parameter(1, 200)
+        self.bias2 = nn.Parameter(1, 10)
+        self.hyper = [self.weight1, self.weight2, self.bias1, self.bias2]
+
     def run(self, x):
         """
         Runs the model for a batch of examples.
@@ -159,6 +167,10 @@ class DigitClassificationModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        hiddenLayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
+
+        return nn.AddBias(nn.Linear(hiddenLayer, self.weight2), self.bias2)
+
     def get_loss(self, x, y):
         """
         Computes the loss for a batch of examples.
@@ -174,11 +186,26 @@ class DigitClassificationModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        return nn.SoftmaxLoss(self.run(x), y)
+
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+
+        loss = 1
+
+        while (loss > 0.03):
+            for x, y in dataset.iterate_once(self.batch_size):
+                lossToGradient = self.get_loss(x, y)
+                loss = nn.as_scalar(lossToGradient)
+
+                if (loss >= 0.03):
+                    gradient = nn.gradients(lossToGradient, self.hyper)
+
+                    for i in range(len(self.hyper)):
+                        nn.Parameter.update(self.hyper[i], gradient[i], self.learningRate)
 
 class LanguageIDModel(object):
     """
@@ -198,6 +225,16 @@ class LanguageIDModel(object):
 
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+
+        self.batch_size = 100
+        self.learningRate = -0.05
+        self.weight1 = nn.Parameter(self.num_chars, 512)
+        self.weight2 = nn.Parameter(512, 512)
+        self.weight3 = nn.Parameter(512, len(self.languages))
+        self.bias1 = nn.Parameter(1, 512)
+        self.bias2 = nn.Parameter(1, 512)
+        self.bias3 = nn.Parameter(1, len(self.languages))
+        self.hyper = [self.weight1, self.weight2, self.weight3, self.bias1, self.bias2, self.bias3]
 
     def run(self, xs):
         """
@@ -230,6 +267,13 @@ class LanguageIDModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        initial = nn.ReLU(nn.AddBias(nn.Linear(xs[0], self.weight1), self.bias1))
+        
+        for i in range(1, len(xs)):
+            initial = nn.ReLU(nn.AddBias(nn.Add(nn.Linear(xs[i], self.weight1), nn.Linear(initial, self.weight2)), self.bias2))
+
+        return nn.AddBias(nn.Linear(initial, self.weight3), self.bias3)
+
     def get_loss(self, xs, y):
         """
         Computes the loss for a batch of examples.
@@ -246,8 +290,23 @@ class LanguageIDModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        return nn.SoftmaxLoss(self.run(xs), y)
+
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+
+        loss = 1
+
+        while (loss > 0.11):
+            for x, y in dataset.iterate_once(self.batch_size):
+                lossToGradient = self.get_loss(x, y)
+                loss = nn.as_scalar(lossToGradient)
+
+                if (loss >= 0.11):
+                    gradient = nn.gradients(lossToGradient, self.hyper)
+
+                    for i in range(len(self.hyper)):
+                        nn.Parameter.update(self.hyper[i], gradient[i], self.learningRate)
