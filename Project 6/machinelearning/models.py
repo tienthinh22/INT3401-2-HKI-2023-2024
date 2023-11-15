@@ -69,6 +69,14 @@ class RegressionModel(object):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
 
+        self.batch_size = 200
+        self.learningRate = -0.05
+        self.weight1 = nn.Parameter(1, 512)
+        self.bias1 = nn.Parameter(1, 512)
+        self.weight2 = nn.Parameter(512, 1)
+        self.bias2 = nn.Parameter(1, 1)
+        self.hyper = [self.weight1, self.weight2, self.bias1, self.bias2]
+
     def run(self, x):
         """
         Runs the model for a batch of examples.
@@ -79,6 +87,10 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+
+        hiddenLayer = nn.ReLU(nn.AddBias(nn.Linear(x, self.weight1), self.bias1))
+
+        return nn.AddBias(nn.Linear(hiddenLayer, self.weight2), self.bias2)
 
     def get_loss(self, x, y):
         """
@@ -92,11 +104,26 @@ class RegressionModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        return nn.SquareLoss(self.run(x), y)
+
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+
+        loss = 1
+
+        while (loss >= 0.02):
+            for x, y in dataset.iterate_once(self.batch_size):
+                lossToGradient = self.get_loss(x, y)
+                loss = nn.as_scalar(lossToGradient)
+
+                if (loss >= 0.02):
+                    gradient = nn.gradients(lossToGradient, self.hyper)
+
+                    for i in range(len(self.hyper)):
+                        nn.Parameter.update(self.hyper[i], gradient[i], self.learningRate)
 
 class DigitClassificationModel(object):
     """
