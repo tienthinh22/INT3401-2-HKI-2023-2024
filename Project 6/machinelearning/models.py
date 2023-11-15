@@ -66,9 +66,9 @@ class RegressionModel(object):
         "*** YOUR CODE HERE ***"
         self.batch_size = 200
         self.learning_rate = -0.05
-        self.weight1 = nn.Parameter(1,200)
-        self.weight2 = nn.Parameter(200,1)
-        self.bias1 = nn.Parameter(1,200)
+        self.weight1 = nn.Parameter(1,512)
+        self.weight2 = nn.Parameter(512,1)
+        self.bias1 = nn.Parameter(1,512)
         self.bias2 = nn.Parameter(1,1)
 
     def run(self, x):
@@ -133,9 +133,9 @@ class DigitClassificationModel(object):
         "*** YOUR CODE HERE ***"
         self.batch_size = 100
         self.learning_rate = -0.5
-        self.weight1 = nn.Parameter(784,100)
-        self.weight2 = nn.Parameter(100,10)
-        self.bias1 = nn.Parameter(1,100)
+        self.weight1 = nn.Parameter(784,200)
+        self.weight2 = nn.Parameter(200,10)
+        self.bias1 = nn.Parameter(1,200)
         self.bias2 = nn.Parameter(1,10)
 
     def run(self, x):
